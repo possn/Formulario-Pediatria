@@ -299,11 +299,11 @@ $('bic').onclick=function(){$('ib').classList.remove('show')};
 
 if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(function(){});
 
-window.addEventListener('load',function(){
+window.addEventListener('load',function(){var sp=$('sp');sp.classList.add('hide');setTimeout(function(){if(sp.parentNode)sp.remove()},400);
   var s=1;try{s=Math.max(1,Math.min(N,+localStorage.getItem('fp_p')||1))}catch(e){}
   setTimeout(function(){
     var sp=$('sp');sp.classList.add('hide');setTimeout(function(){sp.remove()},450);
-  },500);
+  },1);
   goTo(s);
   setTimeout(loadSD,4000);
 });
