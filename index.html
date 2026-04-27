@@ -2,54 +2,237 @@
 <html lang="pt">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Form. Pediatria">
   <meta name="theme-color" content="#1a3a5c">
-  <title>Formulario Pediatria</title>
+  <title>Formulario Pediatria 3a Ed.</title>
   <link rel="manifest" href="manifest.json">
   <link rel="apple-touch-icon" href="apple-touch-icon.png">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: #0d1b2a; color: #e8f4f8; font-family: -apple-system, sans-serif; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-    #header { background: #1a3a5c; padding: 12px; display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-    #header h1 { font-size: 15px; flex: 1; }
-    #pc { font-size: 13px; color: #8baab8; }
-    #viewer { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; display: flex; justify-content: center; }
-    #viewer img { width: 100%; max-width: 900px; height: auto; display: block; padding: 8px; }
-    #nav { background: #1e2d3d; border-top: 1px solid #2e4460; padding: 10px 16px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-    button { background: #1a3a5c; border: 1px solid #2e4460; border-radius: 10px; padding: 10px 20px; color: white; font-size: 22px; cursor: pointer; }
-    button:disabled { opacity: 0.3; }
-    input[type=range] { flex: 1; }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --navy:#1a3a5c;--nl:#2a5298;--ac:#4fc3f7;
+      --bg:#0d1b2a;--s1:#1e2d3d;--s2:#263547;
+      --tx:#e8f4f8;--mu:#8baab8;--bd:#2e4460;
+      --st:env(safe-area-inset-top,0px);--sb:env(safe-area-inset-bottom,0px)
+    }
+    html,body{height:100%;background:var(--bg);color:var(--tx);
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      overflow:hidden;-webkit-tap-highlight-color:transparent}
+    #app{display:flex;flex-direction:column;height:100%;height:-webkit-fill-available}
+
+    /* HEADER */
+    #hd{background:var(--navy);padding:calc(var(--st) + 10px) 12px 10px;
+      display:flex;align-items:center;gap:10px;flex-shrink:0;
+      box-shadow:0 2px 8px rgba(0,0,0,.4)}
+    .logo{width:34px;height:34px;background:var(--ac);border-radius:8px;
+      display:flex;align-items:center;justify-content:center;
+      font-weight:900;font-size:13px;color:var(--navy);flex-shrink:0}
+    .tb{flex:1;min-width:0}
+    .tb h1{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .tb .sub{font-size:10px;color:var(--ac);margin-top:1px}
+    #pc{font-size:12px;color:var(--mu);flex-shrink:0}
+
+    /* SEARCH BAR */
+    #sbar{background:var(--s1);border-bottom:1px solid var(--bd);
+      padding:8px 12px;flex-shrink:0}
+    #si{width:100%;background:var(--s2);border:1px solid var(--bd);
+      border-radius:20px;padding:8px 16px 8px 38px;color:var(--tx);font-size:15px;
+      outline:none;-webkit-appearance:none}
+    #si:focus{border-color:var(--ac)}
+    #si::placeholder{color:var(--mu)}
+    .sw{position:relative}
+    .sic{position:absolute;left:12px;top:50%;transform:translateY(-50%);
+      color:var(--mu);font-size:16px;pointer-events:none}
+
+    /* MAIN */
+    #main{flex:1;overflow:hidden;position:relative}
+
+    /* VIEWER */
+    #vw{position:absolute;inset:0;overflow-y:auto;-webkit-overflow-scrolling:touch;
+      display:flex;flex-direction:column;align-items:center;background:var(--bg)}
+    #vw img{width:100%;max-width:900px;height:auto;display:block;padding:8px;
+      border-radius:4px}
+
+    /* SEARCH RESULTS */
+    #srp{position:absolute;inset:0;background:var(--bg);z-index:50;
+      overflow-y:auto;-webkit-overflow-scrolling:touch;
+      display:none;padding:10px}
+    #srp.op{display:block}
+    #ss{font-size:12px;color:var(--mu);margin-bottom:8px;padding:2px 4px}
+    .sr{background:var(--s1);border:1px solid var(--bd);border-radius:10px;
+      padding:12px;margin-bottom:8px;cursor:pointer}
+    .sr:active{background:var(--s2);border-color:var(--ac)}
+    .sp{font-size:11px;color:var(--ac);font-weight:700;margin-bottom:4px;
+      text-transform:uppercase;letter-spacing:.5px}
+    .st{font-size:13px;line-height:1.5;display:-webkit-box;
+      -webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+    .hl{background:rgba(79,195,247,.25);color:var(--ac);border-radius:2px}
+    #ne{text-align:center;color:var(--mu);padding:50px 20px;font-size:15px}
+    #ne span{font-size:36px;display:block;margin-bottom:12px}
+
+    /* NAV */
+    #nb{background:var(--s1);border-top:1px solid var(--bd);
+      padding:8px 16px calc(var(--sb) + 8px);
+      display:flex;align-items:center;gap:10px;flex-shrink:0}
+    .nb{background:var(--navy);border:1px solid var(--bd);border-radius:10px;
+      padding:9px 18px;color:var(--tx);font-size:22px;cursor:pointer;flex-shrink:0;
+      -webkit-user-select:none}
+    .nb:active{background:var(--nl)}
+    .nb:disabled{opacity:.3;pointer-events:none}
+    #sl{flex:1;-webkit-appearance:none;appearance:none;height:4px;
+      border-radius:2px;background:var(--bd);outline:none;cursor:pointer}
+    #sl::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;
+      border-radius:50%;background:var(--ac);box-shadow:0 2px 6px rgba(0,0,0,.4)}
   </style>
 </head>
 <body>
-  <div id="header">
-    <h1>Formulario de Pediatria 3a Ed.</h1>
-    <div id="pc">1 / 100</div>
+<div id="app">
+  <div id="hd">
+    <div class="logo">FP</div>
+    <div class="tb">
+      <h1>Formulario de Pediatria</h1>
+      <div class="sub">3a Edicao — pesquise um farmaco</div>
+    </div>
+    <div id="pc">1/100</div>
   </div>
-  <div id="viewer">
-    <img id="pi" src="images/1.jpeg" alt="Pagina 1">
+
+  <div id="sbar">
+    <div class="sw">
+      <span class="sic">&#128269;</span>
+      <input type="search" id="si" placeholder="Ex: midazolam, adrenalina, morfina..."
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    </div>
   </div>
-  <div id="nav">
-    <button id="bp" onclick="go(cur-1)" disabled>&#8249;</button>
+
+  <div id="main">
+    <div id="vw">
+      <img id="pi" src="images/1.jpeg" alt="Pagina 1"
+        onerror="this.style.padding='20px';this.alt='Imagem nao disponivel'">
+    </div>
+
+    <div id="srp">
+      <div id="ss"></div>
+      <div id="sr"></div>
+    </div>
+  </div>
+
+  <div id="nb">
+    <button class="nb" id="bp" onclick="go(cur-1)" disabled>&#8249;</button>
     <input type="range" id="sl" min="1" max="100" value="1" oninput="go(+this.value)">
-    <button id="bn" onclick="go(cur+1)">&#8250;</button>
+    <button class="nb" id="bn" onclick="go(cur+1)">&#8250;</button>
   </div>
-  <script>
-    var cur = 1;
-    function go(n) {
-      n = Math.max(1, Math.min(100, n));
-      cur = n;
-      document.getElementById('pi').src = 'images/' + n + '.jpeg';
-      document.getElementById('pc').textContent = n + ' / 100';
-      document.getElementById('sl').value = n;
-      document.getElementById('bp').disabled = n === 1;
-      document.getElementById('bn').disabled = n === 100;
-      document.getElementById('viewer').scrollTo(0, 0);
+</div>
+
+<script>
+var cur=1, sData=null, sReady=false;
+
+function go(n){
+  n=Math.max(1,Math.min(100,n)); cur=n;
+  document.getElementById('pc').textContent=n+'/100';
+  document.getElementById('sl').value=n;
+  document.getElementById('bp').disabled=n===1;
+  document.getElementById('bn').disabled=n===100;
+  var img=document.getElementById('pi');
+  img.src='images/'+n+'.jpeg';
+  img.alt='Pagina '+n;
+  document.getElementById('vw').scrollTo(0,0);
+  // hide search
+  document.getElementById('srp').classList.remove('op');
+  document.getElementById('si').value='';
+  try{localStorage.setItem('fp_p',n)}catch(e){}
+}
+
+// Swipe
+var tx=0,ty=0,tt=0;
+var vw=document.getElementById('vw');
+vw.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;ty=e.touches[0].clientY;tt=Date.now()},{passive:true});
+vw.addEventListener('touchend',function(e){
+  var dx=e.changedTouches[0].clientX-tx,dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>Math.abs(dy)*1.8&&Math.abs(dx)>60&&Date.now()-tt<400)go(dx<0?cur+1:cur-1);
+},{passive:true});
+
+// Search
+var si=document.getElementById('si');
+var db;
+si.addEventListener('input',function(){
+  clearTimeout(db);
+  var q=si.value.trim();
+  if(!q){document.getElementById('srp').classList.remove('op');return}
+  db=setTimeout(function(){doSearch(q)},300);
+});
+
+function doSearch(query){
+  var srp=document.getElementById('srp');
+  var ss=document.getElementById('ss');
+  var sr=document.getElementById('sr');
+  srp.classList.add('op');
+  if(!sReady){
+    ss.textContent='A carregar indice...';
+    sr.innerHTML='';
+    loadSD().then(function(){if(si.value.trim())doSearch(si.value.trim())});
+    return;
+  }
+  var q=query.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+  var matches=[];
+  for(var i=0;i<sData.length;i++){
+    var pg=sData[i];
+    var norm=pg.text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    if(norm.includes(q)){
+      var idx=norm.indexOf(q);
+      var s=Math.max(0,idx-60),e=Math.min(pg.text.length,idx+q.length+150);
+      var ex=pg.text.slice(s,e).replace(/[\r\n]+/g,' ').replace(/\s+/g,' ').trim();
+      if(s>0)ex='...'+ex; if(e<pg.text.length)ex+='...';
+      var re=new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');
+      ex=ex.replace(re,function(m){return'<span class="hl">'+m+'</span>'});
+      matches.push({page:pg.page,ex:ex});
+      if(matches.length>=40)break;
     }
-    if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(function(){});
-  </script>
+  }
+  ss.textContent=matches.length?matches.length+' resultado(s) — toque para ver a pagina':'';
+  if(!matches.length){
+    sr.innerHTML='<div id="ne"><span>&#128270;</span>Sem resultados para <strong>"'+query+'"</strong><br><br><small>Tente o nome generico ou DCI</small></div>';
+    return;
+  }
+  var f=document.createDocumentFragment();
+  for(var j=0;j<matches.length;j++){
+    var m=matches[j];
+    var d=document.createElement('div');
+    d.className='sr';
+    d.innerHTML='<div class="sp">Pagina '+m.page+'</div><div class="st">'+m.ex+'</div>';
+    (function(pg){d.onclick=function(){go(pg)}})(m.page);
+    f.appendChild(d);
+  }
+  sr.innerHTML=''; sr.appendChild(f);
+}
+
+function loadSD(){
+  var pages=new Array(100);
+  function batch(s,e){
+    return Promise.all(
+      Array.from({length:e-s+1},function(_,i){return s+i}).map(function(n){
+        return fetch('texts/'+n+'.txt')
+          .then(function(r){return r.ok?r.text():''})
+          .then(function(t){pages[n-1]={page:n,text:t}})
+          .catch(function(){pages[n-1]={page:n,text:''}});
+      })
+    );
+  }
+  var ps=[];
+  for(var b=1;b<=100;b+=25)ps.push(batch(b,Math.min(b+24,100)));
+  return Promise.all(ps).then(function(){sData=pages;sReady=true});
+}
+
+// Init
+(function(){
+  var s=1;
+  try{s=Math.max(1,Math.min(100,+localStorage.getItem('fp_p')||1))}catch(e){}
+  go(s);
+  setTimeout(loadSD,2000);
+  if('serviceWorker' in navigator)navigator.serviceWorker.register('./sw.js').catch(function(){});
+})();
+</script>
 </body>
 </html>
